@@ -6,14 +6,30 @@
     <title>Генератор идей для выступлений</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="data.js"></script>
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+    </style>
 </head>
-<body class="bg-gray-100 flex items-center justify-center min-h-screen">
-    <div class="bg-white p-8 rounded-lg shadow-lg max-w-md w-full">
-        <h1 class="text-2xl font-bold text-center text-gray-800 mb-6">Генератор идей для выступлений</h1>
-        <button id="generateBtn" class="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-200 mb-4">Сгенерировать идею</button>
-        <div id="ideaOutput" class="text-gray-700">
-            <p><strong>Тема:</strong> <span id="topic">Нажмите кнопку, чтобы получить идею</span></p>
-            <p><strong>Аудитория:</strong> <span id="audience">-</span></p>
+<body class="bg-gradient-to-br from-blue-100 via-purple-50 to-pink-100 flex items-center justify-center min-h-screen p-4">
+    <div class="bg-white p-8 rounded-2xl shadow-xl max-w-lg w-full transform transition-all hover:scale-105">
+        <h1 class="text-3xl font-extrabold text-center text-gray-800 mb-6">Генератор идей для выступлений</h1>
+        <button id="generateBtn" class="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white py-3 px-6 rounded-lg hover:from-blue-600 hover:to-purple-700 transition duration-300 font-semibold text-lg">Сгенерировать идею</button>
+        <div id="ideaOutput" class="mt-6 text-gray-700 space-y-4">
+            <div class="bg-gray-50 p-4 rounded-lg border border-gray-200 fade-in">
+                <p class="text-lg"><strong>Тема:</strong> <span id="topic">Нажмите кнопку, чтобы получить идею</span></p>
+            </div>
+            <div class="bg-gray-50 p-4 rounded-lg border border-gray-200 fade-in">
+                <p class="text-lg"><strong>Аудитория:</strong> <span id="audience">-</span></p>
+            </div>
+        </div>
+        <div class="mt-6 text-center">
+            <button id="copyBtn" class="text-sm text-blue-500 hover:text-blue-700 underline transition duration-200" style="display: none;">Скопировать идею</button>
         </div>
     </div>
 
@@ -21,6 +37,7 @@
         const generateBtn = document.getElementById('generateBtn');
         const topicElement = document.getElementById('topic');
         const audienceElement = document.getElementById('audience');
+        const copyBtn = document.getElementById('copyBtn');
 
         function getRandomItem(array) {
             return array[Math.floor(Math.random() * array.length)];
@@ -29,6 +46,23 @@
         generateBtn.addEventListener('click', () => {
             topicElement.textContent = getRandomItem(topics);
             audienceElement.textContent = getRandomItem(audiences);
+            copyBtn.style.display = 'inline';
+            // Trigger fade-in animation
+            topicElement.parentElement.classList.remove('fade-in');
+            audienceElement.parentElement.classList.remove('fade-in');
+            void topicElement.parentElement.offsetWidth; // Trigger reflow
+            topicElement.parentElement.classList.add('fade-in');
+            audienceElement.parentElement.classList.add('fade-in');
+        });
+
+        copyBtn.addEventListener('click', () => {
+            const ideaText = `Тема: ${topicElement.textContent}\nАудитория: ${audienceElement.textContent}`;
+            navigator.clipboard.writeText(ideaText).then(() => {
+                copyBtn.textContent = 'Идея скопирована!';
+                setTimeout(() => {
+                    copyBtn.textContent = 'Скопировать идею';
+                }, 2000);
+            });
         });
     </script>
 </body>
