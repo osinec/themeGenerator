@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Генератор идей для выступлений</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="data.js"></script>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+    <div class="bg-white p-8 rounded-lg shadow-lg max-w-md w-full">
+        <h1 class="text-2xl font-bold text-center text-gray-800 mb-6">Генератор идей для выступлений</h1>
+        <button id="generateBtn" class="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-200 mb-4">Сгенерировать идею</button>
+        <div id="ideaOutput" class="text-gray-700">
+            <p><strong>Тема:</strong> <span id="topic">Нажмите кнопку, чтобы получить идею</span></p>
+            <p><strong>Аудитория:</strong> <span id="audience">-</span></p>
+        </div>
+    </div>
+
+    <script>
+        const generateBtn = document.getElementById('generateBtn');
+        const topicElement = document.getElementById('topic');
+        const audienceElement = document.getElementById('audience');
+
+        function getRandomItem(array) {
+            return array[Math.floor(Math.random() * array.length)];
+        }
+
+        generateBtn.addEventListener('click', () => {
+            topicElement.textContent = getRandomItem(topics);
+            audienceElement.textContent = getRandomItem(audiences);
+        });
+    </script>
+</body>
+</html>
