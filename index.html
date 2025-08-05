@@ -176,9 +176,10 @@
       </button>
     </div>
 
-    <!-- Спиннер загрузки -->
-    <p id="loading" class="loader">Загрузка тем...</p>
+    <!-- Индикатор загрузки -->
+    <p id="loading" class="loader">Загрузка тем и аудитории...</p>
 
+    <!-- Результат -->
     <div id="result">
       <p><strong><i class="fas fa-lightbulb icon"></i> Тема:</strong> <span id="topic"></span></p>
       <p><strong><i class="fas fa-users icon"></i> Аудитория:</strong> <span id="audience"></span></p>
@@ -186,63 +187,79 @@
   </div>
 
   <script>
-    // Глобальная переменная для хранения данных
+    // Глобальные переменные
     let topicData = null;
+    let commonAudiences = [];
 
-    // Загружаем JSON при старте
+    // Загружаем JSON
     async function loadTopics() {
       try {
         const response = await fetch('topics.json');
-        if (!response.ok) throw new Error('Не удалось загрузить файл тем');
+        if (!response.ok) throw new Error('Не удалось загрузить файл');
         topicData = await response.json();
-        document.getElementById('loading').textContent = 'Готово! Выберите сложность.';
+
+        // Сохраняем общий список аудитории
+        if (topicData.commonAudiences && Array.isArray(topicData.commonAudiences)) {
+          commonAudiences = topicData.commonAudiences;
+        } else {
+          commonAudiences = ["аудитория не найдена"];
+        }
+
+        // Убираем сообщение о загрузке
+        const loading = document.getElementById('loading');
+        loading.textContent = 'Готово! Выберите уровень сложности.';
         setTimeout(() => {
-          document.getElementById('loading').style.opacity = 0;
-          setTimeout(() => document.getElementById('loading').style.display = 'none', 500);
+          loading.style.opacity = 0;
+          setTimeout(() => loading.style.display = 'none', 500);
         }, 800);
+
       } catch (error) {
-        console.error('Ошибка:', error);
-        document.getElementById('loading').innerHTML = '<span style="color: red;">Ошибка загрузки данных. Проверьте, что файл <code>topics.json</code> существует.</span>';
+        console.error('Ошибка загрузки:', error);
+        document.getElementById('loading').innerHTML = '<span style="color: red;">Ошибка: не удалось загрузить данные. Проверьте, что файл <code>topics.json</code> существует и доступен.</span>';
       }
     }
 
-    // Инициализация
+    // Инициализация при загрузке страницы
     window.addEventListener('DOMContentLoaded', loadTopics);
 
-    // Вспомогательная функция: случайный элемент
+    // Вспомогательная функция: случайный элемент из массива
     function getRandomItem(array) {
       return array[Math.floor(Math.random() * array.length)];
     }
 
-    // Генерация темы
+    // Генерация темы и аудитории
     function generateTopic(difficulty) {
-      const resultElement = document.getElementById('result');
-      const topicElement = document.getElementById('topic');
-      const audienceElement = document.getElementById('audience');
-      const loadingElement = document.getElementById('loading');
+      const result = document.getElementById('result');
+      const topicSpan = document.getElementById('topic');
+      const audienceSpan = document.getElementById('audience');
+      const loading = document.getElementById('loading');
 
-      if (!topicData) {
-        loadingElement.textContent = "Данные ещё загружаются...";
-        loadingElement.style.display = 'block';
-        loadingElement.style.opacity = 1;
+      // Проверка, загружены ли данные
+      if (!topicData || commonAudiences.length === 0) {
+        loading.textContent = "Данные ещё загружаются...";
+        loading.style.display = 'block';
+        loading.style.opacity = 1;
         return;
       }
 
       const level = topicData[difficulty];
-      if (!level) {
-        resultElement.innerHTML = '<p style="color: red;">Неизвестный уровень сложности.</p>';
-        resultElement.style.display = 'block';
+      if (!level || !level.topics || level.topics.length === 0) {
+        result.innerHTML = '<p style="color: red;">Тема для этого уровня не найдена.</p>';
+        result.style.display = 'block';
         return;
       }
 
+      // Случайные выборы
       const randomTopic = getRandomItem(level.topics);
-      const randomAudience = getRandomItem(level.audiences);
+      const randomAudience = getRandomItem(commonAudiences);
 
-      topicElement.textContent = `"${randomTopic}"`;
-      audienceElement.textContent = randomAudience;
-      resultElement.style.display = 'block';
+      // Вывод
+      topicSpan.textContent = `"${randomTopic}"`;
+      audienceSpan.textContent = randomAudience;
+      result.style.display = 'block';
 
-      resultElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      // Плавная прокрутка
+      result.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
   </script>
 </body>
