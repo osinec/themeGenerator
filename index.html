@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html class="scroll-smooth" lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Генератор идей для выступлений</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="data.js"></script>
+    <script src="data.js" defer></script>
     <style>
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
@@ -52,39 +52,60 @@
     </div>
 
     <script>
-        const easyBtn = document.getElementById('easyBtn');
-        const mediumBtn = document.getElementById('mediumBtn');
-        const hardBtn = document.getElementById('hardBtn');
-        const topicElement = document.getElementById('topic');
-        const audienceElement = document.getElementById('audience');
-        const copyBtn = document.getElementById('copyBtn');
+        document.addEventListener('DOMContentLoaded', () => {
+            const easyBtn = document.getElementById('easyBtn');
+            const mediumBtn = document.getElementById('mediumBtn');
+            const hardBtn = document.getElementById('hardBtn');
+            const topicElement = document.getElementById('topic');
+            const audienceElement = document.getElementById('audience');
+            const copyBtn = document.getElementById('copyBtn');
 
-        function getRandomItem(array) {
-            return array[Math.floor(Math.random() * array.length)];
-        }
+            // Check if data.js arrays are loaded
+            if (!window.easyTopics || !window.mediumTopics || !window.hardTopics || !window.audiences) {
+                console.error('Error: Data arrays (easyTopics, mediumTopics, hardTopics, audiences) are not defined. Ensure data.js is loaded correctly.');
+                topicElement.textContent = 'Ошибка: Данные не загружены';
+                audienceElement.textContent = '-';
+                return;
+            }
 
-        function generateIdea(topicsArray) {
-            topicElement.textContent = getRandomItem(topicsArray);
-            audienceElement.textContent = getRandomItem(audiences);
-            copyBtn.style.display = 'inline';
-            topicElement.parentElement.classList.remove('fade-in');
-            audienceElement.parentElement.classList.remove('fade-in');
-            void topicElement.parentElement.offsetWidth; // Trigger reflow
-            topicElement.parentElement.classList.add('fade-in');
-            audienceElement.parentElement.classList.add('fade-in');
-        }
+            function getRandomItem(array) {
+                if (!array || array.length === 0) {
+                    console.error('Error: Array is empty or undefined');
+                    return 'Ошибка: Нет данных';
+                }
+                return array[Math.floor(Math.random() * array.length)];
+            }
 
-        easyBtn.addEventListener('click', () => generateIdea(easyTopics));
-        mediumBtn.addEventListener('click', () => generateIdea(mediumTopics));
-        hardBtn.addEventListener('click', () => generateIdea(hardTopics));
+            function generateIdea(topicsArray) {
+                topicElement.textContent = getRandomItem(topicsArray);
+                audienceElement.textContent = getRandomItem(audiences);
+                copyBtn.style.display = 'inline';
+                // Trigger fade-in animation
+                topicElement.parentElement.classList.remove('fade-in');
+                audienceElement.parentElement.classList.remove('fade-in');
+                void topicElement.parentElement.offsetWidth; // Trigger reflow
+                topicElement.parentElement.classList.add('fade-in');
+                audienceElement.parentElement.classList.add('fade-in');
+            }
 
-        copyBtn.addEventListener('click', () => {
-            const ideaText = `Тема: ${topicElement.textContent}\nАудитория: ${audienceElement.textContent}`;
-            navigator.clipboard.writeText(ideaText).then(() => {
-                copyBtn.textContent = 'Идея скопирована!';
-                setTimeout(() => {
-                    copyBtn.textContent = 'Скопировать идею';
-                }, 2000);
+            easyBtn.addEventListener('click', () => generateIdea(easyTopics));
+            mediumBtn.addEventListener('click', () => generateIdea(mediumTopics));
+            hardBtn.addEventListener('click', () => generateIdea(hardTopics));
+
+            copyBtn.addEventListener('click', () => {
+                const ideaText = `Тема: ${topicElement.textContent}\nАудитория: ${audienceElement.textContent}`;
+                navigator.clipboard.writeText(ideaText).then(() => {
+                    copyBtn.textContent = 'Идея скопирована!';
+                    setTimeout(() => {
+                        copyBtn.textContent = 'Скопировать идею';
+                    }, 2000);
+                }).catch(err => {
+                    console.error('Error copying text: ', err);
+                    copyBtn.textContent = 'Ошибка копирования';
+                    setTimeout(() => {
+                        copyBtn.textContent = 'Скопировать идею';
+                    }, 2000);
+                });
             });
         });
     </script>
