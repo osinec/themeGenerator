@@ -1,117 +1,249 @@
 <!DOCTYPE html>
-<html class="scroll-smooth" lang="ru">
+<html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Генератор идей для выступлений</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="data.js" defer></script>
-    <style>
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .fade-in {
-            animation: fadeIn 0.5s ease-in-out;
-        }
-        .gradient-text {
-            background: linear-gradient(to right, #3b82f6, #a855f7);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-        .button-glow {
-            transition: all 0.3s ease-in-out;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-        }
-        .button-glow:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Генератор тем для выступлений</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #f0f4f8, #d9e2ec);
+      color: #2c3e50;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 700px;
+      padding: 40px;
+      background: white;
+      border-radius: 24px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+
+    h1 {
+      font-family: 'Poppins', sans-serif;
+      font-size: 32px;
+      font-weight: 600;
+      color: #1a1a2e;
+      margin-bottom: 12px;
+    }
+
+    p.subtitle {
+      color: #666;
+      font-size: 16px;
+      line-height: 1.6;
+      margin-bottom: 35px;
+    }
+
+    .difficulty-buttons {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 30px;
+    }
+
+    .btn {
+      padding: 14px 24px;
+      font-size: 16px;
+      font-weight: 600;
+      border: none;
+      border-radius: 14px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 5px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.15);
+    }
+
+    .btn:active {
+      transform: translateY(0);
+    }
+
+    .btn-easy {
+      background-color: #4CAF50;
+      color: white;
+    }
+
+    .btn-medium {
+      background-color: #FF9800;
+      color: white;
+    }
+
+    .btn-hard {
+      background-color: #F44336;
+      color: white;
+    }
+
+    #result {
+      padding: 25px;
+      border-radius: 16px;
+      background: #f8f9ff;
+      border-left: 5px solid #5c6bc0;
+      text-align: left;
+      display: none;
+      animation: fadeInUp 0.6s ease-out;
+      margin-top: 20px;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    #result p {
+      font-size: 18px;
+      margin: 10px 0;
+      color: #2c3e50;
+    }
+
+    #result strong {
+      color: #3949ab;
+    }
+
+    .icon {
+      font-size: 18px;
+    }
+
+    .loader {
+      font-size: 14px;
+      color: #777;
+      margin-top: 10px;
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        padding: 30px 20px;
+      }
+      h1 {
+        font-size: 26px;
+      }
+      .btn {
+        font-size: 15px;
+        padding: 12px 20px;
+      }
+      .difficulty-buttons {
+        gap: 10px;
+      }
+    }
+  </style>
 </head>
-<body class="bg-gradient-to-br from-blue-200 via-purple-100 to-pink-200 flex items-center justify-center min-h-screen p-4">
-    <div class="bg-white p-8 rounded-3xl shadow-2xl max-w-md w-full transform transition-all hover:scale-105">
-        <h1 class="text-4xl font-extrabold text-center gradient-text mb-8">Искры Гениальности</h1>
-        <div class="flex justify-between mb-6 space-x-3">
-            <button id="easyBtn" class="flex-1 bg-green-400 text-white py-3 px-4 rounded-xl hover:bg-green-500 button-glow font-semibold text-base">Легкий</button>
-            <button id="mediumBtn" class="flex-1 bg-yellow-400 text-white py-3 px-4 rounded-xl hover:bg-yellow-500 button-glow font-semibold text-base">Средний</button>
-            <button id="hardBtn" class="flex-1 bg-red-400 text-white py-3 px-4 rounded-xl hover:bg-red-500 button-glow font-semibold text-base">Сложный</button>
-        </div>
-        <div id="ideaOutput" class="mt-6 text-gray-800 space-y-4">
-            <div class="bg-gradient-to-r from-gray-50 to-blue-50 p-5 rounded-xl border border-gray-200 fade-in">
-                <p class="text-lg"><strong class="text-blue-600">Тема:</strong> <span id="topic">Выберите уровень сложности</span></p>
-            </div>
-            <div class="bg-gradient-to-r from-gray-50 to-purple-50 p-5 rounded-xl border border-gray-200 fade-in">
-                <p class="text-lg"><strong class="text-purple-600">Аудитория:</strong> <span id="audience">-</span></p>
-            </div>
-        </div>
-        <div class="mt-8 text-center">
-            <button id="copyBtn" class="text-sm bg-blue-100 text-blue-600 px-4 py-2 rounded-full hover:bg-blue-200 hover:text-blue-800 transition duration-200 font-medium" style="display: none;">Скопировать идею</button>
-        </div>
+<body>
+  <div class="container">
+    <i class="fas fa-microphone-alt" style="font-size: 60px; color: #3949ab; margin-bottom: 20px;"></i>
+    <h1>Генератор тем для выступлений</h1>
+    <p class="subtitle">Нажмите на уровень сложности — и получите случайную тему и аудиторию для тренировки публичной речи.</p>
+
+    <div class="difficulty-buttons">
+      <button class="btn btn-easy" onclick="generateTopic('easy')">
+        <i class="fas fa-feather"></i> Лёгкая
+      </button>
+      <button class="btn btn-medium" onclick="generateTopic('medium')">
+        <i class="fas fa-road"></i> Средняя
+      </button>
+      <button class="btn btn-hard" onclick="generateTopic('hard')">
+        <i class="fas fa-fire"></i> Сложная
+      </button>
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const easyBtn = document.getElementById('easyBtn');
-            const mediumBtn = document.getElementById('mediumBtn');
-            const hardBtn = document.getElementById('hardBtn');
-            const topicElement = document.getElementById('topic');
-            const audienceElement = document.getElementById('audience');
-            const copyBtn = document.getElementById('copyBtn');
+    <!-- Спиннер загрузки -->
+    <p id="loading" class="loader">Загрузка тем...</p>
 
-            // Отладка: проверяем, загружены ли данные
-            console.log('easyTopics:', window.easyTopics);
-            console.log('mediumTopics:', window.mediumTopics);
-            console.log('hardTopics:', window.hardTopics);
-            console.log('audiences:', window.audiences);
+    <div id="result">
+      <p><strong><i class="fas fa-lightbulb icon"></i> Тема:</strong> <span id="topic"></span></p>
+      <p><strong><i class="fas fa-users icon"></i> Аудитория:</strong> <span id="audience"></span></p>
+    </div>
+  </div>
 
-            if (!window.easyTopics || !window.mediumTopics || !window.hardTopics || !window.audiences) {
-                console.error('Ошибка: Данные из data.js не загружены. Проверьте путь к файлу или его содержимое.');
-                topicElement.textContent = 'Ошибка: Данные не загружены';
-                audienceElement.textContent = '-';
-                return;
-            }
+  <script>
+    // Глобальная переменная для хранения данных
+    let topicData = null;
 
-            function getRandomItem(array) {
-                if (!array || array.length === 0) {
-                    console.error('Ошибка: Массив пуст или не определён', array);
-                    return 'Ошибка: Нет данных';
-                }
-                return array[Math.floor(Math.random() * array.length)];
-            }
+    // Загружаем JSON при старте
+    async function loadTopics() {
+      try {
+        const response = await fetch('topics.json');
+        if (!response.ok) throw new Error('Не удалось загрузить файл тем');
+        topicData = await response.json();
+        document.getElementById('loading').textContent = 'Готово! Выберите сложность.';
+        setTimeout(() => {
+          document.getElementById('loading').style.opacity = 0;
+          setTimeout(() => document.getElementById('loading').style.display = 'none', 500);
+        }, 800);
+      } catch (error) {
+        console.error('Ошибка:', error);
+        document.getElementById('loading').innerHTML = '<span style="color: red;">Ошибка загрузки данных. Проверьте, что файл <code>topics.json</code> существует.</span>';
+      }
+    }
 
-            function generateIdea(topicsArray) {
-                topicElement.textContent = getRandomItem(topicsArray);
-                audienceElement.textContent = getRandomItem(audiences);
-                copyBtn.style.display = 'inline';
-                topicElement.parentElement.classList.remove('fade-in');
-                audienceElement.parentElement.classList.remove('fade-in');
-                void topicElement.parentElement.offsetWidth; // Триггер перерисовки
-                topicElement.parentElement.classList.add('fade-in');
-                audienceElement.parentElement.classList.add('fade-in');
-            }
+    // Инициализация
+    window.addEventListener('DOMContentLoaded', loadTopics);
 
-            easyBtn.addEventListener('click', () => generateIdea(easyTopics));
-            mediumBtn.addEventListener('click', () => generateIdea(mediumTopics));
-            hardBtn.addEventListener('click', () => generateIdea(hardTopics));
+    // Вспомогательная функция: случайный элемент
+    function getRandomItem(array) {
+      return array[Math.floor(Math.random() * array.length)];
+    }
 
-            copyBtn.addEventListener('click', () => {
-                const ideaText = `Тема: ${topicElement.textContent}\nАудитория: ${audienceElement.textContent}`;
-                navigator.clipboard.writeText(ideaText).then(() => {
-                    copyBtn.textContent = 'Идея скопирована!';
-                    setTimeout(() => {
-                        copyBtn.textContent = 'Скопировать идею';
-                    }, 2000);
-                }).catch(err => {
-                    console.error('Ошибка копирования текста: ', err);
-                    copyBtn.textContent = 'Ошибка копирования';
-                    setTimeout(() => {
-                        copyBtn.textContent = 'Скопировать идею';
-                    }, 2000);
-                });
-            });
-        });
-    </script>
+    // Генерация темы
+    function generateTopic(difficulty) {
+      const resultElement = document.getElementById('result');
+      const topicElement = document.getElementById('topic');
+      const audienceElement = document.getElementById('audience');
+      const loadingElement = document.getElementById('loading');
+
+      if (!topicData) {
+        loadingElement.textContent = "Данные ещё загружаются...";
+        loadingElement.style.display = 'block';
+        loadingElement.style.opacity = 1;
+        return;
+      }
+
+      const level = topicData[difficulty];
+      if (!level) {
+        resultElement.innerHTML = '<p style="color: red;">Неизвестный уровень сложности.</p>';
+        resultElement.style.display = 'block';
+        return;
+      }
+
+      const randomTopic = getRandomItem(level.topics);
+      const randomAudience = getRandomItem(level.audiences);
+
+      topicElement.textContent = `"${randomTopic}"`;
+      audienceElement.textContent = randomAudience;
+      resultElement.style.display = 'block';
+
+      resultElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  </script>
 </body>
 </html>
