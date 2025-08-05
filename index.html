@@ -60,9 +60,14 @@
             const audienceElement = document.getElementById('audience');
             const copyBtn = document.getElementById('copyBtn');
 
-            // Check if data.js arrays are loaded
+            // Отладка: проверяем, загружены ли данные
+            console.log('easyTopics:', window.easyTopics);
+            console.log('mediumTopics:', window.mediumTopics);
+            console.log('hardTopics:', window.hardTopics);
+            console.log('audiences:', window.audiences);
+
             if (!window.easyTopics || !window.mediumTopics || !window.hardTopics || !window.audiences) {
-                console.error('Error: Data arrays (easyTopics, mediumTopics, hardTopics, audiences) are not defined. Ensure data.js is loaded correctly.');
+                console.error('Ошибка: Данные из data.js не загружены. Проверьте путь к файлу или его содержимое.');
                 topicElement.textContent = 'Ошибка: Данные не загружены';
                 audienceElement.textContent = '-';
                 return;
@@ -70,7 +75,7 @@
 
             function getRandomItem(array) {
                 if (!array || array.length === 0) {
-                    console.error('Error: Array is empty or undefined');
+                    console.error('Ошибка: Массив пуст или не определён', array);
                     return 'Ошибка: Нет данных';
                 }
                 return array[Math.floor(Math.random() * array.length)];
@@ -80,10 +85,9 @@
                 topicElement.textContent = getRandomItem(topicsArray);
                 audienceElement.textContent = getRandomItem(audiences);
                 copyBtn.style.display = 'inline';
-                // Trigger fade-in animation
                 topicElement.parentElement.classList.remove('fade-in');
                 audienceElement.parentElement.classList.remove('fade-in');
-                void topicElement.parentElement.offsetWidth; // Trigger reflow
+                void topicElement.parentElement.offsetWidth; // Триггер перерисовки
                 topicElement.parentElement.classList.add('fade-in');
                 audienceElement.parentElement.classList.add('fade-in');
             }
@@ -100,7 +104,7 @@
                         copyBtn.textContent = 'Скопировать идею';
                     }, 2000);
                 }).catch(err => {
-                    console.error('Error copying text: ', err);
+                    console.error('Ошибка копирования текста: ', err);
                     copyBtn.textContent = 'Ошибка копирования';
                     setTimeout(() => {
                         copyBtn.textContent = 'Скопировать идею';
